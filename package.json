@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "orders-console",
   "version": "1.0.0",
   "private": true,
@@ -6,6 +6,11 @@
     "dev:backend": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend",
     "build:backend": "npm run build --prefix backend",
-    "build:frontend": "npm run build --prefix frontend"
+    "build:frontend": "npm run build --prefix frontend",
+    "typecheck:backend": "npm run typecheck --prefix backend",
+    "test:backend": "npm run test --prefix backend",
+    "test:backend:unit": "npm run test:unit --prefix backend",
+    "test:backend:integration": "npm run test:integration --prefix backend",
+    "db:seed": "npm run db:seed --prefix backend"
   }
 }

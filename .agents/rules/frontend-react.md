@@ -1,4 +1,4 @@
-﻿---
+---
 description: Frontend engineering rules for React 18, TypeScript, Tailwind CSS, Native Fetch, and rapid-filter race condition protection
 trigger: glob
 globs:
@@ -38,9 +38,10 @@ globs:
   3. **Success:** Rendered tabular or grid data.
   4. **Empty:** Informative empty state message when queries return 0 results.
 
-## 4. Enterprise Visual Aesthetics & Styling
+## 4. Enterprise Visual Aesthetics & Responsive Layout
 - Use a restrained, professional enterprise palette (Tailwind Slate, Indigo, Emerald, Rose).
-- Establish clear visual hierarchy, consistent padding/spacing scales, and responsive layout.
+- Establish clear visual hierarchy, consistent padding/spacing scales, and responsive layout verified across mobile (375px), tablet (768px), and desktop (1280px) viewports without horizontal page overflow.
+- Keep table overflowing contained inside dedicated horizontal scroll wrappers (`overflow-x-auto`) rather than spilling into document scroll.
 - Eliminate developer-facing sprint labels, internal status tags, or informal debugging text from user-facing screens.
 
 ## 5. Accessibility (a11y) & Semantic HTML
@@ -49,10 +50,12 @@ globs:
   - `role="status"` and `aria-live="polite"` for non-disruptive status updates.
   - `role="alert"` for error banners requiring immediate user attention.
 - Ensure all interactive elements have visible focus rings, keyboard navigability (Tab/Enter/Space), and adequate contrast ratios (WCAG AA).
+- Maintain user-intent modal dismissal (explicit Close/Cancel triggers) without unintended background event interference.
 
 ## 6. Client-Side Authentication & Session Management
-- Store the authentication JWT in `sessionStorage` for session-scoped persistence.
-- Manually attach the bearer token to all authenticated requests via the HTTP header:
-  `Authorization: Bearer <token>`
-- Avoid passing authentication tokens via URL query parameters.
-- Provide a clean logout mechanism that removes the token from `sessionStorage` and immediately resets all authenticated application state.
+- **HttpOnly Cookie Authentication:** Authenticate exclusively through the `auth_token` HttpOnly cookie managed securely by the browser.
+- **No Client-Side Token Storage:** Never store JWTs in `localStorage`, `sessionStorage`, or JavaScript memory. The frontend must never expect, read, or process a JWT in login response bodies.
+- **No Bearer Headers:** Do not send or attach `Authorization: Bearer` headers. All authentication relies strictly on browser cookies.
+- **Credentialed Requests:** Send all authenticated requests and session checks using native `fetch` with `credentials: 'include'` (supported by Vite proxy and backend CORS/Origin policy).
+- **Session Hydration & Verification:** Restore session state on application mount by calling `GET /api/auth/me`. If the request fails or returns 401, transition cleanly to the unauthenticated view.
+- **Clean Logout:** Provide a clean logout mechanism that calls `POST /api/auth/logout` to clear the HttpOnly cookie on the server, then immediately resets all authenticated application state in React.
